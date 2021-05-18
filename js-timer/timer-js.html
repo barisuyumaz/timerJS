@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Timer</title>
+    <style>
+    	.timer {font-family: monospace;font-size: 10rem;}
+    	.start,.stop,.continue,.reset {font-size:2.5rem; padding:12;}
+    	.timer_aktif {color:#2980B9;}
+    	.timer_durdu {color:red;}
+   	</style>
+   	<script>
+   		const start_timer = () => {
+
+   			const div_timer = document.querySelector(".timer");
+            if(div_timer.classList.contains("timer_aktif")){
+            return;}
+            div_timer.classList.add("timer_aktif"); 
+
+   			durum_mesaj("Timer has started");
+
+   			yeni_zaman();
+   			zamanlayici = setInterval(yeni_zaman,1000);
+
+
+   		};
+   		const stop_timer = () => {
+            const div_timer = document.querySelector(".timer");
+            if(div_timer.classList.contains("timer_aktif")){
+            	div_timer.classList.add("timer_durdu");
+                iptal_timer();
+                durum_mesaj("Timer has stopped");
+            }
+        };
+   		const continue_timer = () => {
+
+   			const div_timer = document.querySelector(".timer");
+	            if(div_timer.classList.contains("timer_durdu")){
+	   			yeni_zaman();
+	   			zamanlayici = setInterval(yeni_zaman,1000);
+	   			div_timer.classList.remove("timer_durdu");
+	   			durum_mesaj("Timer has continue");
+	            return;}
+             
+
+   		};
+
+
+        const iptal_timer = () => {
+            clearInterval(zamanlayici);
+        };
+
+        const reset_timer = () => {
+            const div_timer = document.querySelector(".timer");
+            if(div_timer.classList.contains("timer_aktif")){
+                div_timer.classList.remove("timer_aktif");
+                iptal_timer();
+                div_timer.textContent = "00:00:00";
+                durum_mesaj("");
+            }            
+        };
+
+   		const durum_mesaj = (mesaj) => {
+   			document.querySelector('#durum').textContent = mesaj;
+   		};
+
+   		const yeni_zaman = () => {
+   			const mevcut = document.querySelector(".timer").textContent;
+   			const yeni_saniye = zaman_arti(mevcut);
+   			zaman_saat_dakika_saniye(yeni_saniye);
+   		};
+
+        const zaman_arti = (zaman) => {
+            const zaman_arr = zaman.split(":");
+            const saat = parseInt(zaman_arr[0]);
+            const dakika = parseInt(zaman_arr[1]);
+            const saniye = parseInt(zaman_arr[2]);
+            const toplam_saniye = (saat * 3600) + (dakika * 60) + saniye;
+            return toplam_saniye + 1;
+        };
+        const zaman_saat_dakika_saniye = (toplam_saniye) => {
+        	let saat = parseInt(toplam_saniye/3600);
+        	let dakika = parseInt((toplam_saniye-saat*3600)/60);
+        	let saniye = parseInt(toplam_saniye-((saat*3600)+(dakika*60)));
+
+        	if(saniye<10){saniye = "0"+saniye;}
+        	if(dakika<10){dakika = "0"+dakika;}
+        	if(saat<10){saat = "0"+saat;}
+            const yeni_zaman = `${saat}:${dakika}:${saniye}`;
+            document.querySelector(".timer").textContent = yeni_zaman;
+
+        };
+   	</script>
+</head>
+
+<body>
+	<div>
+		<div class="timer">00:00:00</div>
+		<div id="kontrol">
+			<button class="start" onclick="start_timer()">Start</button>
+			<button class="stop" onclick="stop_timer()">Stop</button>
+			<button class="continue" onclick="continue_timer()">Continue</button>
+			<button class="reset" onclick="reset_timer()">Reset</button>
+		</div>
+		<div id="durum"></div>
+
+	</div>	
+</body>
+
+</html>
